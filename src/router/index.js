@@ -19,6 +19,8 @@ const routes = [
   { path: '/informes/:id', name: 'informe-detalle', component: () => import('@/views/InformeDetalleView.vue'), meta: { perfiles: ['ambiental', 'administracion', 'tecnologia', 'docente'], titulo: 'Informe' } },
   { path: '/actas', name: 'actas', component: () => import('@/views/ActasView.vue'), meta: { perfiles: TODOS, titulo: 'Actas de reuniones' } },
   { path: '/movimientos', name: 'movimientos', component: () => import('@/views/MovimientosView.vue'), meta: { perfiles: TODOS, titulo: 'Recursos y gastos' } },
+  { path: '/usuarios', name: 'usuarios', component: () => import('@/views/UsuariosView.vue'), meta: { perfiles: ['administracion', 'tecnologia', 'docente'], titulo: 'Usuarios' } },
+  { path: '/lugares', name: 'lugares', component: () => import('@/views/LugaresView.vue'), meta: { perfiles: ['tecnologia'], titulo: 'Lugares de relevamiento' } },
   { path: '/:pathMatch(.*)*', redirect: '/' }
 ]
 
