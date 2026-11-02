@@ -17,7 +17,7 @@ Vue 3 + Vite + Vue Router en el frontend; Supabase (PostgreSQL, Auth y Storage) 
    ```
 4. Configurar y levantar la app:
    ```bash
-   cp .env.example .env   # completar URL y clave publicable (Project Settings > API)
+   cp .env.example .env   # completar URL y clave publicable (Project Settings > API Keys)
    npm install
    npm run dev
    ```

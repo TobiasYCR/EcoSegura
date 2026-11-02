@@ -10,6 +10,7 @@ create extension if not exists pgcrypto;
 create or replace function public.hoy()
 returns date
 language sql stable
+set search_path = public
 as $$ select (now() at time zone 'America/Argentina/Buenos_Aires')::date $$;
 
 -- ---------------------------------------------------------------------
@@ -619,7 +620,8 @@ create policy movimientos_modificar on public.movimientos for update to authenti
 
 -- Privilegios de tabla: el visitante anónimo no accede a nada.
 revoke all on all tables in schema public from anon, authenticated;
-revoke all on all functions in schema public from anon;
+-- Postgres da EXECUTE a PUBLIC por defecto: se quita y se otorga solo lo necesario.
+revoke execute on all functions in schema public from public, anon;
 grant usage on schema public to authenticated;
 grant select on all tables in schema public to authenticated;
 grant insert, update on public.lugares, public.registros_residuos, public.reciclables,
@@ -629,7 +631,7 @@ grant execute on function public.mi_perfil(), public.tiene_perfil(text[]),
   public.es_integrante(), public.nombres_integrantes(),
   public.asignar_perfil(uuid, text, text, text, boolean, text, text),
   public.actualizar_mis_datos(text, text) to authenticated;
-grant execute on function public.crear_perfil_usuario(), public.preparar_alta(),
+grant execute on function public.preparar_alta(),
   public.marcar_actualizacion(), public.validar_registro(), public.validar_anulacion(),
   public.validar_informe(), public.controlar_fecha(), public.hoy() to authenticated;
 

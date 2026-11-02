@@ -1,12 +1,13 @@
 import { createClient } from '@supabase/supabase-js'
 
 const url = import.meta.env.VITE_SUPABASE_URL
-const clave = import.meta.env.VITE_SUPABASE_ANON_KEY
+// Clave publicable (sb_publishable_...) o, en proyectos viejos, la anon key
+const clave = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY
 
 export const configurado = Boolean(url && clave)
 
 if (!configurado) {
-  console.error('Faltan VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY en el archivo .env')
+  console.error('Faltan VITE_SUPABASE_URL y VITE_SUPABASE_PUBLISHABLE_KEY en el archivo .env')
 }
 
 // Solo URL y clave publicable: los permisos los aplica la base (RLS).
