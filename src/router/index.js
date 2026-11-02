@@ -14,6 +14,9 @@ const routes = [
   { path: '/registros/:id/editar', name: 'registro-editar', component: () => import('@/views/RegistroFormView.vue'), meta: { perfiles: ['relevador'], titulo: 'Corregir registro' } },
   { path: '/registros/:id', name: 'registro-detalle', component: () => import('@/views/RegistroDetalleView.vue'), meta: { perfiles: TODOS, titulo: 'Detalle del registro' } },
   { path: '/reciclables', name: 'reciclables', component: () => import('@/views/ReciclablesView.vue'), meta: { perfiles: TODOS, titulo: 'Reciclables recuperados' } },
+  { path: '/estadisticas', name: 'estadisticas', component: () => import('@/views/EstadisticasView.vue'), meta: { perfiles: TODOS, titulo: 'Estadísticas' } },
+  { path: '/informes', name: 'informes', component: () => import('@/views/InformesView.vue'), meta: { perfiles: ['ambiental', 'administracion', 'tecnologia', 'docente'], titulo: 'Informes al municipio' } },
+  { path: '/informes/:id', name: 'informe-detalle', component: () => import('@/views/InformeDetalleView.vue'), meta: { perfiles: ['ambiental', 'administracion', 'tecnologia', 'docente'], titulo: 'Informe' } },
   { path: '/actas', name: 'actas', component: () => import('@/views/ActasView.vue'), meta: { perfiles: TODOS, titulo: 'Actas de reuniones' } },
   { path: '/movimientos', name: 'movimientos', component: () => import('@/views/MovimientosView.vue'), meta: { perfiles: TODOS, titulo: 'Recursos y gastos' } },
   { path: '/:pathMatch(.*)*', redirect: '/' }
