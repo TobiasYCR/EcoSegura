@@ -132,7 +132,7 @@ onMounted(() =>
                 <div class="titulo">{{ r.lugar }} <EtiquetaPrueba v-if="r.datos_prueba" /></div>
                 <div class="meta">
                   {{ formatoFechaCorta(r.fecha) }} · {{ formatoHora(r.hora) }} · {{ TIPOS_RESIDUO[r.tipo] }} ·
-                  {{ r.cantidad_bolsas }} bolsas<span v-if="r.critica" style="color: var(--rojo); font-weight: 700"> · crítica</span>
+                  {{ r.cantidad_bolsas }} {{ r.cantidad_bolsas === 1 ? 'bolsa' : 'bolsas' }}<span v-if="r.critica" style="color: var(--rojo); font-weight: 700"> · crítica</span>
                 </div>
               </div>
               <EtiquetaEstado :estado="r.estado" />

@@ -164,7 +164,7 @@ function limpiarFiltros() {
                 {{ formatoFechaCorta(r.fecha) }} · {{ formatoHora(r.hora) }} · {{ TIPOS_RESIDUO[r.tipo] }}
               </div>
               <div class="meta">
-                {{ r.cantidad_bolsas }} bolsas
+                {{ r.cantidad_bolsas }} {{ r.cantidad_bolsas === 1 ? 'bolsa' : 'bolsas' }}
                 <span v-if="r.critica" class="etiqueta roja">Crítica</span>
                 <EtiquetaPrueba v-if="r.datos_prueba" />
               </div>

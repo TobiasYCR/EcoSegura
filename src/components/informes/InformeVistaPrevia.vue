@@ -78,7 +78,7 @@ onMounted(async () => {
     <div v-if="conFoto.length" class="fotos" style="margin-bottom: 12px">
       <figure v-for="r in conFoto" :key="r.id">
         <img :src="fotos[r.foto_path]" alt="" />
-        <figcaption>{{ r.lugar }} · {{ formatoFecha(r.fecha) }} {{ formatoHora(r.hora) }} · {{ r.cantidad_bolsas }} bolsas</figcaption>
+        <figcaption>{{ r.lugar }} · {{ formatoFecha(r.fecha) }} {{ formatoHora(r.hora) }} · {{ r.cantidad_bolsas }} {{ r.cantidad_bolsas === 1 ? 'bolsa' : 'bolsas' }}</figcaption>
       </figure>
     </div>
     <div v-if="sinFoto.length" class="tabla-contenedor">
