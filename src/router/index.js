@@ -9,6 +9,10 @@ const routes = [
   { path: '/mi-cuenta', name: 'mi-cuenta', component: () => import('@/views/MiCuentaView.vue'), meta: { sinPerfil: true, titulo: 'Mi cuenta' } },
 
   { path: '/', name: 'inicio', component: () => import('@/views/InicioView.vue'), meta: { perfiles: TODOS, titulo: 'Inicio' } },
+  { path: '/registros', name: 'registros', component: () => import('@/views/RegistrosView.vue'), meta: { perfiles: TODOS, titulo: 'Registros de residuos' } },
+  { path: '/registros/nuevo', name: 'registro-nuevo', component: () => import('@/views/RegistroFormView.vue'), meta: { perfiles: ['relevador'], titulo: 'Nuevo registro' } },
+  { path: '/registros/:id/editar', name: 'registro-editar', component: () => import('@/views/RegistroFormView.vue'), meta: { perfiles: ['relevador'], titulo: 'Corregir registro' } },
+  { path: '/registros/:id', name: 'registro-detalle', component: () => import('@/views/RegistroDetalleView.vue'), meta: { perfiles: TODOS, titulo: 'Detalle del registro' } },
   { path: '/:pathMatch(.*)*', redirect: '/' }
 ]
 
