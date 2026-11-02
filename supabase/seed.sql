@@ -44,7 +44,7 @@ insert into public.registros_residuos
 select e.fecha,
        e.hora + make_interval(mins => (e.h % 9)::int),
        l.id,
-       case when l.nombre in ('Patio trasero', 'Vereda del gimnasio') and e.h % 3 = 0
+       case when l.nombre in ('Patio trasero', 'Vereda del gimnasio') and (e.h / 7) % 3 <> 0
             then 'interno' else 'externo' end,
        (array['Bolsas rotas en el piso',
               'Bolsas apiladas junto al cesto',

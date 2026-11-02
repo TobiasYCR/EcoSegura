@@ -19,6 +19,8 @@ const error = ref('')
 const casosExternos = computed(() =>
   (est.value?.registros || []).filter((r) => r.tipo === 'externo' && r.critica).slice(0, 12)
 )
+const conFoto = computed(() => (props.informe.incluye_fotos ? casosExternos.value.filter((r) => fotos.value[r.foto_path]) : []))
+const sinFoto = computed(() => casosExternos.value.filter((r) => !conFoto.value.includes(r)))
 const franjaCritica = computed(() =>
   est.value?.total ? est.value.franjas.reduce((a, b) => (b.valor > a.valor ? b : a)) : null
 )
@@ -73,18 +75,17 @@ onMounted(async () => {
 
     <h2>Casos críticos fuera de la escuela</h2>
     <p v-if="!casosExternos.length">No hubo casos críticos externos en el período.</p>
-    <div v-else-if="informe.incluye_fotos" class="fotos">
-      <figure v-for="r in casosExternos" :key="r.id">
-        <img v-if="fotos[r.foto_path]" :src="fotos[r.foto_path]" alt="" />
-        <div v-else style="height: 130px; background: var(--gris-100); border-radius: 6px; display: flex; align-items: center; justify-content: center">Sin foto</div>
+    <div v-if="conFoto.length" class="fotos" style="margin-bottom: 12px">
+      <figure v-for="r in conFoto" :key="r.id">
+        <img :src="fotos[r.foto_path]" alt="" />
         <figcaption>{{ r.lugar }} · {{ formatoFecha(r.fecha) }} {{ formatoHora(r.hora) }} · {{ r.cantidad_bolsas }} bolsas</figcaption>
       </figure>
     </div>
-    <div v-else class="tabla-contenedor">
+    <div v-if="sinFoto.length" class="tabla-contenedor">
       <table class="tabla">
         <thead><tr><th>Fecha</th><th>Hora</th><th>Lugar</th><th class="num">Bolsas</th><th>Descripción</th></tr></thead>
         <tbody>
-          <tr v-for="r in casosExternos" :key="r.id">
+          <tr v-for="r in sinFoto" :key="r.id">
             <td>{{ formatoFecha(r.fecha) }}</td><td>{{ formatoHora(r.hora) }}</td><td>{{ r.lugar }}</td>
             <td class="num">{{ r.cantidad_bolsas }}</td><td>{{ r.descripcion }}</td>
           </tr>

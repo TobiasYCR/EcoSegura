@@ -80,11 +80,20 @@ watch(form, () => {
   }
 })
 
+// Al corregir un campo se quita su mensaje de error
+watch(
+  () => ({ ...form }),
+  (nuevo, viejo) => {
+    for (const k of Object.keys(nuevo)) if (nuevo[k] !== viejo[k]) delete errores.value[k]
+  }
+)
+
 function elegirFoto(e) {
   const archivo = e.target.files[0]
   if (!archivo) return
   foto.value = archivo
   vistaFoto.value = URL.createObjectURL(archivo)
+  delete errores.value.foto
 }
 
 function descartarBorrador() {

@@ -158,7 +158,7 @@ p { margin: 0 0 0.75rem; }
 .opciones label { display: inline-flex; align-items: center; gap: 6px; font-weight: 500; font-size: 0.95rem; color: var(--gris-900); }
 .opciones input { width: 18px; height: 18px; accent-color: var(--rojo); }
 
-.filtros { display: grid; grid-template-columns: 2fr repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+.filtros { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 14px; align-items: end; }
 .filtros label { display: flex; flex-direction: column; gap: 4px; font-size: 0.78rem; font-weight: 600; color: var(--gris-500); }
 
 .foto-carga {
