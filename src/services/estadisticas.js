@@ -25,6 +25,10 @@ export async function calcularEstadisticas({ desde, hasta, tipo = '', lugarId = 
   const criticasPorLugar = agrupar(registros.filter((r) => r.critica), (r) => r.lugar)
   const kilosMaterial = agrupar(reciclables, (r) => r.material, (r) => Number(r.kilos))
   const kilosSemana = agrupar(reciclables, (r) => inicioSemana(r.fecha), (r) => Number(r.kilos))
+  const criticasSemana = agrupar(
+    registros.filter((r) => r.tipo === 'externo' && r.critica),
+    (r) => inicioSemana(r.fecha)
+  )
 
   return {
     total: registros.length,
@@ -42,6 +46,9 @@ export async function calcularEstadisticas({ desde, hasta, tipo = '', lugarId = 
     })),
     semanas: Object.keys(kilosSemana).sort().map((s) => ({
       etiqueta: s, valor: Math.round(kilosSemana[s] * 100) / 100
+    })),
+    criticasSemana: Object.keys(criticasSemana).sort().map((s) => ({
+      etiqueta: s, valor: criticasSemana[s]
     })),
     registros,
     reciclables

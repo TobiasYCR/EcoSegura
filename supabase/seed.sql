@@ -53,7 +53,11 @@ select e.fecha,
               'Botellas y latas sueltas',
               'Bolsas abiertas con mal olor'])[(e.h % 6) + 1],
        case
-         when extract(isodow from e.fecha) = 1 and e.hora = '12:20' then 3 + (e.h % 3)::int
+         -- El informe enviado a mitad del piloto consiguió un retiro extra los lunes
+         -- al mediodía. Desde la respuesta quedan casos, pero dejan de ser críticos.
+         when extract(isodow from e.fecha) = 1 and e.hora = '12:20'
+              and e.fecha < public.hoy() - 14 then 3 + (e.h % 3)::int
+         when extract(isodow from e.fecha) = 1 and e.hora = '12:20' then 1 + (e.h % 2)::int
          when l.nombre = 'Esquina norte' then 2 + (e.h % 3)::int
          else (e.h % 4)::int
        end,

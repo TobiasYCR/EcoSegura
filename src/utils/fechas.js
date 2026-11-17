@@ -48,3 +48,28 @@ export function inicioSemana(iso) {
   d.setDate(d.getDate() - dia)
   return d.toISOString().slice(0, 10)
 }
+
+export function finSemana(iso) {
+  return sumarDias(inicioSemana(iso), 6)
+}
+
+// Últimas semanas completas (lunes a domingo). La semana en curso no se usa
+// porque todavía podría cambiar y distorsionar la comparación del piloto.
+export function rangoUltimasSemanas(cantidad = 4, referencia = hoyISO()) {
+  const d = new Date(referencia + 'T12:00:00')
+  const dia = d.getDay()
+  const hasta = sumarDias(referencia, -(dia === 0 ? 7 : dia))
+  return { desde: sumarDias(hasta, -(cantidad * 7 - 1)), hasta }
+}
+
+export function semanasCompletas(desde, hasta) {
+  if (!desde || !hasta || desde > hasta) return []
+  let cursor = inicioSemana(desde)
+  if (cursor < desde) cursor = sumarDias(cursor, 7)
+  const semanas = []
+  while (sumarDias(cursor, 6) <= hasta) {
+    semanas.push({ desde: cursor, hasta: sumarDias(cursor, 6) })
+    cursor = sumarDias(cursor, 7)
+  }
+  return semanas
+}

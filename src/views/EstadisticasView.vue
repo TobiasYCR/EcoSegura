@@ -11,6 +11,7 @@ import AvisoOperacion from '@/components/common/AvisoOperacion.vue'
 import AvisoPrueba from '@/components/common/AvisoPrueba.vue'
 import GraficoColumnas from '@/components/common/GraficoColumnas.vue'
 import GraficoBarras from '@/components/common/GraficoBarras.vue'
+import GraficoLinea from '@/components/common/GraficoLinea.vue'
 
 const { cargando, error, ejecutar, limpiar } = useOperacion()
 const lugares = ref([])
@@ -27,6 +28,7 @@ const franjaCritica = computed(() => {
   if (!est.value?.total) return null
   return est.value.franjas.reduce((a, b) => (b.valor > a.valor ? b : a))
 })
+const periodoTexto = computed(() => `${formatoFechaCorta(filtros.desde)} al ${formatoFechaCorta(filtros.hasta)}`)
 
 async function cargar() {
   if (errorPeriodo.value) return
@@ -83,28 +85,39 @@ watch(filtros, cargar)
 
       <div class="columnas">
         <section class="panel">
-          <h2>Acumulaciones por franja horaria</h2>
+          <h2>¿Bajan semana a semana las acumulaciones críticas fuera de la escuela?</h2>
+          <p class="meta-grafico">Acumulaciones externas críticas por semana · {{ periodoTexto }} · Total: {{ est.criticasSemana.reduce((s, x) => s + x.valor, 0) }}</p>
+          <p v-if="!est.criticasSemana.length" class="vacio">Sin críticas externas en el período.</p>
+          <GraficoLinea v-else :datos="est.criticasSemana.map((s, i) => ({ etiqueta: 'Sem. ' + (i + 1), valor: s.valor }))" />
+        </section>
+        <section class="panel">
+          <h2>¿En qué franja horaria aparecen más acumulaciones?</h2>
+          <p class="meta-grafico">Acumulaciones por franja · {{ periodoTexto }} · Total: {{ est.total }}</p>
           <GraficoColumnas :datos="est.franjas" />
           <p v-if="franjaCritica" class="leyenda">
             <span><i style="background: var(--rojo)"></i>Franja más crítica: {{ franjaCritica.etiqueta }}</span>
           </p>
         </section>
         <section class="panel">
-          <h2>Acumulaciones por lugar</h2>
+          <h2>¿En qué lugares se concentran las acumulaciones?</h2>
+          <p class="meta-grafico">Acumulaciones por lugar · {{ periodoTexto }} · Total: {{ est.total }}</p>
           <p v-if="!est.lugares.length" class="vacio">Sin datos.</p>
           <GraficoBarras v-else :datos="est.lugares" etiqueta-extra="Críticas" />
         </section>
         <section class="panel">
           <h2>Acumulaciones por día de la semana</h2>
+          <p class="meta-grafico">Cantidad de registros · {{ periodoTexto }} · Total: {{ est.total }}</p>
           <GraficoColumnas :datos="est.dias" />
         </section>
         <section class="panel">
           <h2>Kilos recuperados por material</h2>
+          <p class="meta-grafico">Kilogramos · {{ periodoTexto }} · Total: {{ formatoKilos(est.kilos) }}</p>
           <GraficoColumnas :datos="est.materiales" unidad=" kg" />
         </section>
       </div>
       <section class="panel">
         <h2>Kilos recuperados por semana</h2>
+        <p class="meta-grafico">Kilogramos · {{ periodoTexto }} · Total: {{ formatoKilos(est.kilos) }}</p>
         <p v-if="!est.semanas.length" class="vacio">Sin pesajes en el período.</p>
         <GraficoColumnas v-else :datos="est.semanas.map((s) => ({ etiqueta: 'Sem. ' + formatoFechaCorta(s.etiqueta), valor: s.valor }))" unidad=" kg" />
       </section>
