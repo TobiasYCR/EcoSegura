@@ -13,6 +13,7 @@ drop policy if exists comprobantes_subir on storage.objects;
 drop view if exists public.v_registros;
 drop table if exists public.movimientos cascade;
 drop table if exists public.actas cascade;
+drop table if exists public.seguimientos cascade;
 drop table if exists public.informes cascade;
 drop table if exists public.reciclables cascade;
 drop table if exists public.registros_residuos cascade;

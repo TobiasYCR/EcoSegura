@@ -191,6 +191,9 @@ table.tabla { width: 100%; border-collapse: collapse; background: var(--blanco);
 .tabla th { text-align: left; background: var(--gris-100); color: var(--gris-700); font-weight: 600; padding: 9px 12px; white-space: nowrap; border-bottom: 1px solid var(--gris-200); }
 .tabla td { padding: 9px 12px; border-bottom: 1px solid var(--gris-200); vertical-align: top; }
 .tabla tr:last-child td { border-bottom: 0; }
+.tabla tr.seleccionado td { background: var(--rojo-suave); }
+.encabezado-seccion h2 { margin: 0; }
+.texto-secundario { color: var(--gris-500); margin: 4px 0 14px; }
 .tabla tr.anulado td { color: var(--gris-500); text-decoration: line-through; }
 .tabla tr.anulado td .etiqueta, .tabla tr.anulado td .btn { text-decoration: none; }
 .tabla .num { text-align: right; white-space: nowrap; }

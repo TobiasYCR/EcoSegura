@@ -105,6 +105,27 @@ create table public.informes (
   constraint informe_envio_con_fecha check (estado <> 'enviado' or fecha_envio is not null)
 );
 
+-- Informes de seguimiento del piloto. Los datos calculados se guardan como
+-- una instantánea para que el documento histórico no cambie si luego se
+-- corrigen registros, pesajes o gastos del período.
+create table public.seguimientos (
+  id               uuid primary key default gen_random_uuid(),
+  titulo           text not null check (char_length(titulo) between 5 and 120),
+  periodo_desde    date not null,
+  periodo_hasta    date not null,
+  interpretacion   text check (interpretacion is null or char_length(interpretacion) <= 4000),
+  acciones         text check (acciones is null or char_length(acciones) <= 3000),
+  datos            jsonb not null check (jsonb_typeof(datos) = 'object'),
+  consultado_en    timestamptz not null,
+  creado_por       uuid references public.perfiles (id),
+  datos_prueba     boolean not null default false,
+  creado_en        timestamptz not null default now(),
+  actualizado_en   timestamptz not null default now(),
+  constraint seguimiento_periodo_valido check (
+    periodo_desde <= periodo_hasta and periodo_hasta <= public.hoy()
+  )
+);
+
 -- Actas de reuniones (artículo 7 del reglamento)
 create table public.actas (
   id             uuid primary key default gen_random_uuid(),
@@ -141,6 +162,8 @@ create index registros_lugar_idx on public.registros_residuos (lugar_id);
 create index registros_creado_por_idx on public.registros_residuos (creado_por);
 create index reciclables_fecha_idx on public.reciclables (fecha desc);
 create index informes_estado_idx on public.informes (estado);
+create index seguimientos_periodo_idx on public.seguimientos (periodo_hasta desc, periodo_desde desc);
+create index seguimientos_creado_por_idx on public.seguimientos (creado_por);
 create index actas_fecha_idx on public.actas (fecha desc);
 create index movimientos_fecha_idx on public.movimientos (fecha desc);
 
@@ -515,6 +538,11 @@ create trigger informes_reglas before insert or update on public.informes
 create trigger informes_actualizacion before update on public.informes
   for each row execute function public.marcar_actualizacion();
 
+create trigger seguimientos_alta before insert on public.seguimientos
+  for each row execute function public.preparar_alta();
+create trigger seguimientos_actualizacion before update on public.seguimientos
+  for each row execute function public.marcar_actualizacion();
+
 create trigger actas_alta before insert on public.actas
   for each row execute function public.preparar_alta();
 create trigger actas_actualizacion before update on public.actas
@@ -548,6 +576,7 @@ alter table public.lugares             enable row level security;
 alter table public.registros_residuos  enable row level security;
 alter table public.reciclables         enable row level security;
 alter table public.informes            enable row level security;
+alter table public.seguimientos        enable row level security;
 alter table public.actas               enable row level security;
 alter table public.movimientos         enable row level security;
 
@@ -600,6 +629,18 @@ create policy informes_modificar on public.informes for update to authenticated
 create policy informes_borrar on public.informes for delete to authenticated
   using (public.tiene_perfil('administracion') and estado = 'borrador');
 
+-- Seguimientos: los cuatro perfiles responsables pueden consultar, crear y
+-- actualizar documentos. Administración puede eliminar un seguimiento.
+create policy seguimientos_ver on public.seguimientos for select to authenticated
+  using (public.tiene_perfil('ambiental', 'administracion', 'tecnologia', 'docente'));
+create policy seguimientos_crear on public.seguimientos for insert to authenticated
+  with check (public.tiene_perfil('ambiental', 'administracion', 'tecnologia', 'docente'));
+create policy seguimientos_modificar on public.seguimientos for update to authenticated
+  using (public.tiene_perfil('ambiental', 'administracion', 'tecnologia', 'docente'))
+  with check (public.tiene_perfil('ambiental', 'administracion', 'tecnologia', 'docente'));
+create policy seguimientos_borrar on public.seguimientos for delete to authenticated
+  using (public.tiene_perfil('administracion'));
+
 -- Actas y movimientos: todos ven (artículo 3); solo Administración carga.
 create policy actas_ver on public.actas for select to authenticated
   using (public.es_integrante());
@@ -623,8 +664,8 @@ revoke all on all functions in schema public from anon;
 grant usage on schema public to authenticated;
 grant select on all tables in schema public to authenticated;
 grant insert, update on public.lugares, public.registros_residuos, public.reciclables,
-  public.informes, public.actas, public.movimientos to authenticated;
-grant delete on public.informes to authenticated;
+  public.informes, public.seguimientos, public.actas, public.movimientos to authenticated;
+grant delete on public.informes, public.seguimientos to authenticated;
 grant execute on function public.mi_perfil(), public.tiene_perfil(text[]),
   public.es_integrante(), public.nombres_integrantes(),
   public.asignar_perfil(uuid, text, text, text, boolean, text, text),
